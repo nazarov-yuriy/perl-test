@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#Code">Code</a></li>
+</ul>
+
+<h1 id="Code">Code</h1>
+
+<pre><code>    #!/usr/bin/perl
+    use strict;
+    use warnings FATAL =&gt; &#39;all&#39;;
+
+    use DBI;
+    use Scalar::Util qw(looks_like_number);
+
+    use constant {
+        COMMIT_BATCH =&gt; 1000000,
+        DB_HOSTNAME  =&gt; &quot;127.0.0.1&quot;,
+        DB_NAME      =&gt; &quot;postgres&quot;,
+        DB_USER      =&gt; &quot;postgres&quot;,
+        DB_PASSWORD  =&gt; &quot;postgres&quot;,
+    };
+
+    sub validated_record(@) {
+        my ($id, undef, undef) = @_;
+        die &quot;Incorrect record size&quot; unless ( 3 == scalar @_ );
+        die &quot;Incorrect format&quot; unless looks_like_number($id);
+        return @_;
+    }
+
+    my ($in_file_name) = @ARGV;
+    open my $in_fh, &#39;&lt;&#39;, $in_file_name or die $!;
+
+    my DBI::db $dbh = DBI-&gt;connect(&quot;dbi:Pg:dbname=${\DB_NAME};host=${\DB_HOSTNAME}&quot;, DB_USER, DB_PASSWORD, {
+            PrintError =&gt; 0,
+            RaiseError =&gt; 1,
+            AutoCommit =&gt; 0
+        });
+
+    my $statement = &#39;INSERT INTO banners (banner_id, title, url) VALUES (?, ?, ?)&#39;.
+        &#39; ON CONFLICT (banner_id) DO UPDATE SET (title, url) = (EXCLUDED.title, EXCLUDED.url)&#39;;
+    my DBI::st $sth = $dbh-&gt;prepare($statement);
+
+    my $uncommited = 0;
+    while (defined (my $line = &lt;$in_fh&gt;)) {
+        $uncommited++;
+        chomp $line;
+        my @record = split /\t/, $line;
+        $sth-&gt;execute(validated_record(@record));
+        if ($uncommited &gt;= COMMIT_BATCH) {
+            $uncommited = 0;
+            $dbh-&gt;commit();
+        }
+    }
+    $dbh-&gt;commit();
+    $dbh-&gt;disconnect();
+    close $in_fh;
+
+    print &quot;Records were updated successfully.&quot;;</code></pre>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#Output">Output</a></li>
+  <li><a href="#Comments">Comments</a></li>
+</ul>
+
+<h1 id="Output">Output</h1>
+
+<p>10 3 6</p>
+
+<h1 id="Comments">Comments</h1>
+
+<p>Initial thoughts were: 6 3 10</p>
+
+<p>because reverse looks like sort&#39;s sub name argument like in the following code:</p>
+
+<p><code>sub backwards { $b cmp $a }; print join &#39; &#39;, sort backwards qw/6 10 3/;</code></p>
+
+<p>However, there are function <a href="http://perldoc.perl.org/functions/reverse.html">reverse</a> that can be called in LIST context with LIST argument.</p>
+
+<p>So code</p>
+
+<p><code>print join &quot; &quot;, sort reverse qw/6 10 3/;</code></p>
+
+<p>is equal to</p>
+
+<p><code>print join &quot; &quot;, sort( reverse( qw/6 10 3/ ) );</code></p>
+
+<p>what can be proved by getting the same output from a command perl -MO=Concise -e &#39;&lt;code&gt;&#39; for both of them</p>
+
+<pre><code>  f  &lt;@&gt; leave[1 ref] vKP/REFC -&gt;(end)
+  1     &lt;0&gt; enter -&gt;2
+  2     &lt;;&gt; nextstate(main 1 -e:1) v:{ -&gt;3
+  e     &lt;@&gt; print vK -&gt;f
+  3        &lt;0&gt; pushmark s -&gt;4
+  d        &lt;@&gt; join[t2] sK/2 -&gt;e
+  4           &lt;0&gt; pushmark s -&gt;5
+  5           &lt;$&gt; const[PV &quot; &quot;] s -&gt;6
+  c           &lt;@&gt; sort lK -&gt;d
+  6              &lt;0&gt; pushmark s -&gt;7
+  b              &lt;@&gt; reverse[t1] lKP/1 -&gt;c
+  7                 &lt;0&gt; pushmark s -&gt;8
+  8                 &lt;$&gt; const[PV &quot;6&quot;] s -&gt;9
+  9                 &lt;$&gt; const[PV &quot;10&quot;] s -&gt;a
+  a                 &lt;$&gt; const[PV &quot;3&quot;] s -&gt;b</code></pre>
+
+<p>So it&#39;s just lexicographical(and not numerical) array sorting.</p>
+
+
+</body>
+
+</html>
+
+

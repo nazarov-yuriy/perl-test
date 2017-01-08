@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#Output">Output</a></li>
+  <li><a href="#Comments">Comments</a></li>
+</ul>
+
+<h1 id="Output">Output</h1>
+
+<p>i</p>
+
+<h1 id="Comments">Comments</h1>
+
+<pre><code>  my $t = &quot;There&#39;s more than one way to do it!&quot;;
+  #        00000000001111111111222222222233333
+  #        01234567890123456789012345678901234
+
+  \s - Space. == substr($t, 7, 1)
+  (?:pattern)? - Greedy match whole cluster 1 or 0 times. == substr($t, 8, 24)
+      (?:pattern) - Clustering.
+          .* - Greedy match any character 0 or more times.
+          \s - Space.
+  () - Capture. == substr($t, 32, 1)
+      \w+? - Non-greedy match word character 1 or more times.</code></pre>
+
+
+</body>
+
+</html>
+
+
